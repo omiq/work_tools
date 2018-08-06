@@ -4,6 +4,11 @@ import tweepy
 from tweepy import OAuthHandler
 from textblob import TextBlob
 
+"""
+This script grabs the most recent 200
+tweets containing @studiopress and
+tests for sentiment.
+"""
 
 class TwitterClient(object):
     '''
