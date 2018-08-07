@@ -1,14 +1,16 @@
 import os
 import re
+import sys
 import tweepy
 from tweepy import OAuthHandler
 from textblob import TextBlob
 
 """
 This script grabs the most recent 200
-tweets containing @studiopress and
+tweets containing eg. @studiopress and
 tests for sentiment.
 """
+
 
 class TwitterClient(object):
     '''
@@ -69,7 +71,7 @@ class TwitterClient(object):
             # call twitter api to fetch tweets
             fetched_tweets = self.api.search(q=query, count=count)
 
-            # parsing tweets one by one
+            # get each tweet
             for tweet in fetched_tweets:
                 # empty dictionary to store required params of a tweet
                 parsed_tweet = {}
@@ -96,28 +98,36 @@ class TwitterClient(object):
 
 
 def main():
-    # creating object of TwitterClient Class
-    api = TwitterClient()
-    # calling function to get tweets
-    tweets = api.get_tweets(query='@studiopress', count=200)
+    # get the argument
+    search_query = sys.argv[1]
 
-    # picking positive tweets from tweets
+    # create TwitterClient object
+    api = TwitterClient()
+
+    # get tweets
+    tweets = api.get_tweets(query=search_query, count=200)
+
+    # get positive tweets
     ptweets = [tweet for tweet in tweets if tweet['sentiment'] == 'positive']
-    # percentage of positive tweets
+
+    # % positive tweets
     print("Positive tweets percentage: {} %".format(100 * len(ptweets) / len(tweets)))
-    # picking negative tweets from tweets
+
+    # get negative tweets
     ntweets = [tweet for tweet in tweets if tweet['sentiment'] == 'negative']
-    # percentage of negative tweets
+
+    # % of negative tweets
     print("Negative tweets percentage: {} %".format(100 * len(ntweets) / len(tweets)))
-    # percentage of neutral tweets
+
+    # % neutral tweets
     print("Neutral tweets percentage: {} %".format(100 * (len(tweets) - len(ntweets) - len(ptweets)) / len(tweets)))
 
-    # printing first 5 positive tweets
+    # print first 5 positive tweets
     print("\n\nPositive tweets:")
     for tweet in ptweets[:10]:
         print(tweet['text'])
 
-    # printing first 5 negative tweets
+    # print first 5 negative tweets
     print("\n\nNegative tweets:")
     for tweet in ntweets[:10]:
         print(tweet['text'])
