@@ -3,6 +3,11 @@ import os
 import requests
 import time
 import pyperclip
+import picamera
+from picamera import color
+import tkinter as tk
+
+
 
 
 # upload a selected image to WP
@@ -60,4 +65,24 @@ def upload_image(image):
     time.sleep(5)
     return url
 
+
+def main():
+        camera = picamera.PiCamera(resolution=(1920, 1080))
+        camera.vflip = True
+        camera.hflip = True
+        camera.awb_mode = 'auto'
+        camera.exposure_mode = 'auto'
+        camera.annotate_background = color.Color("#000")
+        camera.annotate_text = "Hit the button to capture ..."
+        camera.annotate_foreground = color.Color("#fff")
+        camera.preview_fullscreen = True
+        #camera.preview_window = (48, 105, 1824, 1026)
+
+        while 1:
+            camera.start_preview()
+            time.sleep(5)
+
+
+if __name__ == "__main__":
+        main()
 
