@@ -70,9 +70,7 @@ def upload_image(image):
     # to clipboard. Should just work on mac/win
     # Ubuntu clipboard is pretty crap so you will need
     # xclip and Parcellite to make it usable
-    print(url)
     pyperclip.copy(url)
-    time.sleep(5)
     return url
 
 
