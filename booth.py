@@ -16,6 +16,9 @@ GPIO.setmode(GPIO.BCM)
 # Set pin 26 as input using pull up resistor
 GPIO.setup(26, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+# gui window
+window = tk.Tk()
+
 
 # upload a selected image to WP
 def upload_image(image):
@@ -96,8 +99,8 @@ def key_press(event):
     event_action(event)
 
 
-def captured():
-    window = tk.Tk()
+def display_captured():
+
     window.attributes("-fullscreen", True)
     window.bind("<Button>", clicked)
     window.bind("<Key>", key_press)
@@ -105,6 +108,12 @@ def captured():
     image_widget = tk.Label(window, image=pic)
     image_widget.place(x=0, y=0, width=1920, height=1080)
     window.mainloop()
+
+
+def capture(camera, file):
+    camera.resolution = (1920, 1080)
+    camera.capture(file, 'jpeg')
+    camera.resolution = (1280, 720)
 
 
 def main():
@@ -118,36 +127,36 @@ def main():
         camera.add_overlay(img.tobytes(), layer = 3, alpha = 100)
         camera.preview_fullscreen = True
 
-
-        _thread.start_new_thread(preview, (camera,))
+        preview = _thread.start_new_thread(preview, (camera,))
 
         while 1:
             if not GPIO.input(26):
                 camera.stop_preview()
+                preview.exit()
                 file = "./picture.jpg"
-                camera.resolution = (1920, 1080)
-                camera.capture(file, 'jpeg')
 
-                _thread.start_new_thread(captured, ())
+                capture(camera, file)
 
-                camera.resolution = (1280, 720)
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
+                capture = _thread.start_new_thread(display_captured, ())
 
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
 
                 time.sleep(5)
-                camera.start_preview()
+                window.quit()
+                preview = _thread.start_new_thread(preview, (camera,))
+
             else:
                 print("Waiting")
 
