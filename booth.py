@@ -6,7 +6,7 @@ import requests
 import time
 import pyperclip
 import picamera
-from picamera import color
+import pygame
 import tkinter as tk
 from PIL import ImageTk, Image
 
@@ -16,8 +16,8 @@ GPIO.setmode(GPIO.BCM)
 # Set pin 26 as input using pull up resistor
 GPIO.setup(26, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-# gui window
-window = tk.Tk()
+# Load up the shutter sound effect
+pygame.mixer.init()
 
 
 # upload a selected image to WP
@@ -76,7 +76,7 @@ def upload_image(image):
     return url
 
 
-def preview(camera):
+def preview_camera(camera):
 
     camera.start_preview()
     time.sleep(5)
@@ -87,7 +87,6 @@ def preview(camera):
 
 
 def event_action(event):
-    print(repr(event))
     event.widget.quit()
 
 
@@ -99,18 +98,32 @@ def key_press(event):
     event_action(event)
 
 
-def display_captured():
+def display_captured(file):
 
+    sys.stdout.write(u"\x1b[2J\x1b[H\u001b[41;1m" + "Uploading ...\n\n\n\n\u001b[0m")
+
+    # transfer the file
+    uploaded = upload_image(file)
+    print(uploaded)
+
+    pygame.mixer.music.load("tada.mp3")
+
+    # gui window
+    window = tk.Tk()
     window.attributes("-fullscreen", True)
     window.bind("<Button>", clicked)
     window.bind("<Key>", key_press)
-    pic = ImageTk.PhotoImage(Image.open("./picture.jpg"))
+    pic = ImageTk.PhotoImage(Image.open(file))
     image_widget = tk.Label(window, image=pic)
     image_widget.place(x=0, y=0, width=1920, height=1080)
+    window.after(3000, lambda: window.destroy())
+    pygame.mixer.music.play()
     window.mainloop()
 
 
 def capture(camera, file):
+    pygame.mixer.music.load("shutter.mp3")
+    pygame.mixer.music.play()
     camera.resolution = (1920, 1080)
     camera.capture(file, 'jpeg')
     camera.resolution = (1280, 720)
@@ -121,47 +134,40 @@ def main():
         camera.vflip = True
         camera.hflip = True
         camera.awb_mode = 'auto'
-        camera.exposure_mode = 'auto'
+        camera.exposure_mode = 'sports'
 
         img = Image.open('overlay.png')
-        camera.add_overlay(img.tobytes(), layer = 3, alpha = 100)
+        overlay = camera.add_overlay(img.tobytes(), layer=3, alpha=100)
         camera.preview_fullscreen = True
 
-        preview = _thread.start_new_thread(preview, (camera,))
+        preview = _thread.start_new_thread(preview_camera, (camera,))
 
         while 1:
             if not GPIO.input(26):
+                camera.remove_overlay(overlay)
                 camera.stop_preview()
-                preview.exit()
-                file = "./picture.jpg"
+
+                file = "./pictures/booth_{}.jpg".format(time.time())
 
                 capture(camera, file)
 
-                capture = _thread.start_new_thread(display_captured, ())
+                display_captured(file)
 
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
-                print("SNAP!!")
+                for x in range(0, 10):
+                    sys.stdout.write(u"\u001b[1000D" + "SNAP!!")
 
-                time.sleep(5)
-                window.quit()
-                preview = _thread.start_new_thread(preview, (camera,))
+                overlay = camera.add_overlay(img.tobytes(), layer=3, alpha=100)
+                camera.start_preview()
 
             else:
-                print("Waiting")
+
+                if time.time() % 2 > 0:
+                    sys.stdout.write(u"\x1b[2J\x1b[H\u001b[47;1m" + "Waiting")
+                else:
+                    sys.stdout.write(u"\x1b[2J\x1b[H\u001b[47;1m" + "Waiting ..")
 
 
 if __name__ == "__main__":
         main()
-        #captured()
+        #display_captured("./pictures/picture.jpg")
 
