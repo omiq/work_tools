@@ -1,13 +1,20 @@
+import _thread
 import sys
 import os
+import RPi.GPIO as GPIO
 import requests
 import time
 import pyperclip
 import picamera
 from picamera import color
 import tkinter as tk
+from PIL import ImageTk, Image
 
+# We are going to use the BCM numbering
+GPIO.setmode(GPIO.BCM)
 
+# Set pin 26 as input using pull up resistor
+GPIO.setup(26, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
 # upload a selected image to WP
@@ -66,23 +73,86 @@ def upload_image(image):
     return url
 
 
+def preview(camera):
+
+    camera.start_preview()
+    time.sleep(5)
+
+    while 1:
+        #do nothing
+        foo=False
+
+
+def event_action(event):
+    print(repr(event))
+    event.widget.quit()
+
+
+def clicked(event):
+    event_action(event)
+
+
+def key_press(event):
+    event_action(event)
+
+
+def captured():
+    window = tk.Tk()
+    window.attributes("-fullscreen", True)
+    window.bind("<Button>", clicked)
+    window.bind("<Key>", key_press)
+    pic = ImageTk.PhotoImage(Image.open("./picture.jpg"))
+    image_widget = tk.Label(window, image=pic)
+    image_widget.place(x=0, y=0, width=1920, height=1080)
+    window.mainloop()
+
+
 def main():
-        camera = picamera.PiCamera(resolution=(1920, 1080))
+        camera = picamera.PiCamera(resolution=(1280, 720))
         camera.vflip = True
         camera.hflip = True
         camera.awb_mode = 'auto'
         camera.exposure_mode = 'auto'
-        camera.annotate_background = color.Color("#000")
-        camera.annotate_text = "Hit the button to capture ..."
-        camera.annotate_foreground = color.Color("#fff")
+
+        img = Image.open('overlay.png')
+        camera.add_overlay(img.tobytes(), layer = 3, alpha = 100)
         camera.preview_fullscreen = True
-        #camera.preview_window = (48, 105, 1824, 1026)
+
+
+        _thread.start_new_thread(preview, (camera,))
 
         while 1:
-            camera.start_preview()
-            time.sleep(5)
+            if not GPIO.input(26):
+                camera.stop_preview()
+                file = "./picture.jpg"
+                camera.resolution = (1920, 1080)
+                camera.capture(file, 'jpeg')
+
+                _thread.start_new_thread(captured, ())
+
+                camera.resolution = (1280, 720)
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+                print("SNAP!!")
+
+
+                time.sleep(5)
+                camera.start_preview()
+            else:
+                print("Waiting")
 
 
 if __name__ == "__main__":
         main()
+        #captured()
 
