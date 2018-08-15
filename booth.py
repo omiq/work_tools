@@ -9,7 +9,6 @@ import picamera
 import pygame
 import tkinter as tk
 from PIL import ImageTk, Image
-from requests_oauthlib import OAuth1
 
 # We are going to use the BCM numbering
 GPIO.setmode(GPIO.BCM)
@@ -33,9 +32,9 @@ def upload_image(image):
     slug = os.path.basename(image)
 
     # this line needs to be changed to YOUR wp site
-    url = "http://booth2018.wpengine.com/wp-json/wp/v2/media/?title=" + slug
+    url = "http://geekahol.com/wp-json/wp/v2/media/?title=" + slug
 
-    # the headers for the request (right now hard coded to be JPG because that is all I need)
+    # the headers for the request (right now hard coded to be JPG because photographs)
     headers = {
         'Content-Type': "image/jpg",
         'content-disposition': "attachment; filename=" + slug,
@@ -51,34 +50,24 @@ def upload_image(image):
 
     # set up the parameters - basic login details from the environment variables
     files = {'file': file_data}
-    oauth_token = os.environ['oauth_token']
-    oauth_token_secret = os.environ['oauth_token_secret']
-    client_key = os.environ['client_key']
-    client_secret = os.environ['client_secret']
-
-    auth = OAuth1(client_key, client_secret, oauth_token, oauth_token_secret)
-
+    user = os.environ['WP_USER']
+    password = os.environ['WP_PASS']
 
     # send the data and get the response back
-    response = requests.post(url,
+    response = requests.request(
+        "POST",
+        url,
         headers=headers,
         data=file_data,
-        auth=auth)
+        auth=(user, password))
 
-    print(dir(response))
-    print(response.content)
-
+    #print(response)
 
     # parse the response via the JSON library
     json = response.json()
     guid = json.get('guid')
     url = guid.get('raw')
 
-    # display the generated image URL and copy
-    # to clipboard. Should just work on mac/win
-    # Ubuntu clipboard is pretty crap so you will need
-    # xclip and Parcellite to make it usable
-    pyperclip.copy(url)
     return url
 
 
@@ -174,8 +163,8 @@ def main():
 
 
 if __name__ == "__main__":
-        #main()
+        main()
 
-        file = "./pictures/picture.jpg"
+        #file = "./pictures/picture.jpg"
         #display_captured(file)
-        print(upload_image(file))
+        #print(upload_image(file))
