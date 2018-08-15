@@ -9,6 +9,7 @@ import picamera
 import pygame
 import tkinter as tk
 from PIL import ImageTk, Image
+from requests_oauthlib import OAuth1
 
 # We are going to use the BCM numbering
 GPIO.setmode(GPIO.BCM)
@@ -32,11 +33,11 @@ def upload_image(image):
     slug = os.path.basename(image)
 
     # this line needs to be changed to YOUR wp site
-    url = "https://makerhacks.com/wp-json/wp/v2/media/?title=" + slug
+    url = "http://booth2018.wpengine.com/wp-json/wp/v2/media/?title=" + slug
 
-    # the headers for the request (right now hard coded to be PNG because that is all I need)
+    # the headers for the request (right now hard coded to be JPG because that is all I need)
     headers = {
-        'Content-Type': "image/png",
+        'Content-Type': "image/jpg",
         'content-disposition': "attachment; filename=" + slug,
         'Cache-Control': "no-cache",
         }
@@ -50,16 +51,23 @@ def upload_image(image):
 
     # set up the parameters - basic login details from the environment variables
     files = {'file': file_data}
-    user = os.environ['WPUSER']
-    password = os.environ['WPPASS']
+    oauth_token = os.environ['oauth_token']
+    oauth_token_secret = os.environ['oauth_token_secret']
+    client_key = os.environ['client_key']
+    client_secret = os.environ['client_secret']
+
+    auth = OAuth1(client_key, client_secret, oauth_token, oauth_token_secret)
+
 
     # send the data and get the response back
-    response = requests.request(
-        "POST",
-        url,
+    response = requests.post(url,
         headers=headers,
         data=file_data,
-        auth=(user, password))
+        auth=auth)
+
+    print(dir(response))
+    print(response.content)
+
 
     # parse the response via the JSON library
     json = response.json()
@@ -166,6 +174,8 @@ def main():
 
 
 if __name__ == "__main__":
-        main()
-        #display_captured("./pictures/picture.jpg")
+        #main()
 
+        file = "./pictures/picture.jpg"
+        #display_captured(file)
+        print(upload_image(file))
