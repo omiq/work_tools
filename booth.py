@@ -30,8 +30,11 @@ def upload_image(image):
     # get just the filename
     slug = os.path.basename(image)
 
-    # this line needs to be changed to YOUR wp site
-    url = "http://geekahol.com/wp-json/wp/v2/media/?title=" + slug
+    # this line needs to be changed to the correct site - REST API
+    # does not work on WPE so using SPS
+    # url = "http://geekahol.com/wp-json/wp/v2/media/?title=" + slug
+    # url = "http://booth2018.wpengine.com/wp-json/wp/v2/media/?title=" + slug
+    url = "http://photome.io/wp-json/wp/v2/media/?title=" + slug
 
     # the headers for the request (right now hard coded to be JPG because photographs)
     headers = {
@@ -60,7 +63,9 @@ def upload_image(image):
         data=file_data,
         auth=(user, password))
 
-    #print(response)
+    if (response.status_code == 403):
+        print(response)
+        exit()
 
     # parse the response via the JSON library
     json = response.json()
@@ -162,8 +167,8 @@ def main():
 
 
 if __name__ == "__main__":
-        main()
+        #main()
 
-        #file = "./pictures/picture.jpg"
+        file = "./pictures/picture.jpg"
         #display_captured(file)
-        #print(upload_image(file))
+        print(upload_image(file))
