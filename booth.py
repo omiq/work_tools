@@ -4,7 +4,6 @@ import os
 import RPi.GPIO as GPIO
 import requests
 import time
-import pyperclip
 import picamera
 import pygame
 import tkinter as tk
