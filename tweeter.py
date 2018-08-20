@@ -40,7 +40,10 @@ class TwitterClient(object):
             print("Error: Authentication Failed")
 
     def tweet(self, text):
-        self.api.update_status(text)
+        return self.api.update_status(text)
+
+    def tweet_image(self, image_url, text):
+        return self.api.update_with_media(image_url, text)
 
 
 def main():
@@ -51,7 +54,7 @@ def main():
     api = TwitterClient()
 
     # tweet
-    response = api.tweet(txt)
+    response = api.tweet_image('/Users/chris.garrett/Pictures/kara.jpg', "Test #2")
 
 
 if __name__ == "__main__":
