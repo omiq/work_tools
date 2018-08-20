@@ -231,8 +231,10 @@ def main():
 
 
 if __name__ == "__main__":
-        #main()
 
-        file = "./pictures/picture.jpg"
+        # main loop
+        main()
+
+        '''file = "./pictures/picture.jpg"
         print(display_captured(file))
         #print(upload_image(file))'''
