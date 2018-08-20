@@ -3,13 +3,8 @@ import sys
 import tweepy
 from tweepy import OAuthHandler
 
-"""
-This script grabs the most recent 200
-tweets containing eg. @studiopress and
-tests for sentiment.
-"""
 
-
+# twitter utility class
 class TwitterClient(object):
     '''
     Generic Twitter Class for sentiment analysis.
