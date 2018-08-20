@@ -171,7 +171,7 @@ def display_captured(file):
     pic = ImageTk.PhotoImage(Image.open(file))
     image_widget = tk.Label(window, image=pic)
     image_widget.place(x=0, y=0, width=1920, height=1080)
-    window.after(3000, lambda: window.destroy())
+    window.after(5000, lambda: window.destroy())
     pygame.mixer.music.play()
     window.mainloop()
 
@@ -227,8 +227,8 @@ def main():
 
 
 if __name__ == "__main__":
-        #main()
+        main()
 
-        file = "./pictures/picture.jpg"
+        '''file = "./pictures/picture.jpg"
         print(display_captured(file))
-        #print(upload_image(file))
+        #print(upload_image(file))'''
