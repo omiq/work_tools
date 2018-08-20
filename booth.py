@@ -161,17 +161,21 @@ def display_captured(file):
     response = create_post(image_id)
     print(response)
 
+    # success sound
     pygame.mixer.music.load("tada.mp3")
 
     # gui window
     window = tk.Tk()
     window.attributes("-fullscreen", True)
+    window.minsize(1920, 1080)
     window.bind("<Button>", clicked)
     window.bind("<Key>", key_press)
     pic = ImageTk.PhotoImage(Image.open(file))
     image_widget = tk.Label(window, image=pic)
     image_widget.place(x=0, y=0, width=1920, height=1080)
-    window.after(5000, lambda: window.destroy())
+    window.update()
+    window.minsize(1920, 1080)
+    window.after(3000, lambda: window.destroy())
     pygame.mixer.music.play()
     window.mainloop()
 
@@ -227,8 +231,8 @@ def main():
 
 
 if __name__ == "__main__":
-        main()
+        #main()
 
-        '''file = "./pictures/picture.jpg"
+        file = "./pictures/picture.jpg"
         print(display_captured(file))
         #print(upload_image(file))'''
