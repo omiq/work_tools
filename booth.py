@@ -6,6 +6,7 @@ import requests
 import time
 import picamera
 import pygame
+import tweeter
 import tkinter as tk
 from PIL import ImageTk, Image
 
@@ -189,6 +190,18 @@ def capture(camera, file):
     camera.resolution = (1280, 720)
 
 
+# tweet the pic
+def tweet(file):
+    # create TwitterClient object
+    api = tweeter.TwitterClient()
+
+    # set the content
+    tweet_txt = "@makerhacks look at this #test "
+
+    # tweet
+    response = api.tweet_image(file, tweet_txt)
+
+
 # main loop
 def main():
         camera = picamera.PiCamera(resolution=(1280, 720))
@@ -215,6 +228,8 @@ def main():
                 capture(camera, file)
 
                 display_captured(file)
+
+                tweet(file)
 
                 for x in range(0, 10):
                     sys.stdout.write(u"\u001b[1000D" + "SNAP!!")

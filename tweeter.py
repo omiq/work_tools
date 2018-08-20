@@ -1,9 +1,7 @@
 import os
-import re
 import sys
 import tweepy
 from tweepy import OAuthHandler
-from textblob import TextBlob
 
 """
 This script grabs the most recent 200
