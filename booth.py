@@ -19,6 +19,12 @@ GPIO.setup(26, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 # Load up the shutter sound effect
 pygame.mixer.init()
 
+# gui window
+window = tk.Tk()
+window.attributes("-fullscreen", True)
+window.minsize(1920, 1080)
+window.configure(background='blue')
+
 
 # get an image source for a given attachment ID
 def get_url(image_id):
@@ -157,26 +163,23 @@ def display_captured(file):
 
     sys.stdout.write(u"\x1b[2J\x1b[H\u001b[41;1m" + "Uploading ...\n\n\n\n\u001b[0m")
 
+    # success sound
+    pygame.mixer.music.load("tada.mp3")
+
+    #window.bind("<Button>", clicked)
+    #window.bind("<Key>", key_press)
+    pic = ImageTk.PhotoImage(Image.open(file).resize((640, 360)))
+    image_widget = tk.Label(window, image=pic, width=800, height=600, background='black')
+    image_widget.place(x=0, y=0, width=800, height=600)
+    image_widget.pack(expand=True)
+    window.update()
+    window.minsize(800, 600)
+
     # transfer the file
     image_id = upload_image(file)
     response = create_post(image_id)
     print(response)
-
-    # success sound
-    pygame.mixer.music.load("tada.mp3")
-
-    # gui window
-    window = tk.Tk()
-    window.attributes("-fullscreen", True)
-    window.minsize(1920, 1080)
-    window.bind("<Button>", clicked)
-    window.bind("<Key>", key_press)
-    pic = ImageTk.PhotoImage(Image.open(file))
-    image_widget = tk.Label(window, image=pic)
-    image_widget.place(x=0, y=0, width=1920, height=1080)
-    window.update()
-    window.minsize(1920, 1080)
-    window.after(3000, lambda: window.destroy())
+    window.after(1500, lambda: window.destroy())
     pygame.mixer.music.play()
     window.mainloop()
 
@@ -248,8 +251,8 @@ def main():
 if __name__ == "__main__":
 
         # main loop
-        main()
+        #main()
 
-        '''file = "./pictures/picture.jpg"
+        file = "./pictures/picture.jpg"
         print(display_captured(file))
         #print(upload_image(file))'''
