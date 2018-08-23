@@ -5,26 +5,11 @@ import pygame
 import pygame.camera
 from pygame.locals import *
 
-# set up the camera
-pygame.init()
-pygame.camera.init()
-
-# clock so the loop does not freeze the pi
-clock = pygame.time.Clock()
-
-# set up our viewing screen
-screen = pygame.display.set_mode((1280, 720))
-
 
 # function that pulls data from the image
 def read_codes(input):
     # read the QR code(s)
     codes = pyzbar.decode(input)
-
-    # Print results
-    for this_code in codes:
-        if "QRCODE" == this_code.type:
-            print('DETECTED: {}'.format(str(this_code.data)))
 
     return codes
 
@@ -32,12 +17,23 @@ def read_codes(input):
 # main function
 if __name__ == '__main__':
 
+    # set up the camera
+    pygame.init()
+    pygame.camera.init()
+
+    # clock so the loop does not freeze the pi
+    clock = pygame.time.Clock()
+
+    # set up our viewing screen
+    screen = pygame.display.set_mode((320, 200))
+
     # use the first camera in the list
+    # run sudo modprobe bcm2835-v4l2 to install official camera
     camlist = pygame.camera.list_cameras()
     DEVICE = camlist[0]
 
     # reasonably high res capture, in RGB mode
-    SIZE = (1280, 720)
+    SIZE = (320, 200)
     camera = pygame.camera.Camera(DEVICE, SIZE, "RGB")
 
     # start capture
@@ -55,7 +51,12 @@ if __name__ == '__main__':
         input_image = PIL.Image.open("input.jpg")
 
         # check the image
-        result = read_codes(input_image)
+        codes = read_codes(input_image)
+
+        # Print results
+        for this_code in codes:
+            if "QRCODE" == this_code.type:
+                print('DETECTED: {}'.format(str(this_code.data)))
 
         # 60 frames per second - essentially real time
         clock.tick(60)

@@ -6,7 +6,9 @@ import requests
 import time
 import picamera
 import pygame
+import PIL
 import tweeter
+import qrscan
 import tkinter as tk
 from PIL import ImageTk, Image
 
@@ -154,6 +156,19 @@ def key_press(event):
 
 # display the captured image on screen
 def display_captured(file):
+
+    # read the image
+    input_image = PIL.Image.open(file)
+
+    # scan for QR codes
+    codes = qrscan.read_codes(input_image)
+
+    # Print results
+    for this_code in codes:
+        if "QRCODE" == this_code.type:
+            sys.stdout.write(u"\x1b[2J\x1b[H\u001b[41;1m" + "QR CODE SCAN COMPLETE ...\n\n\n\n\u001b[0m")
+            print('DETECTED: {}'.format(str(this_code.data)))
+            exit()
 
     # success sound
     pygame.mixer.music.load("tada.mp3")
