@@ -26,6 +26,7 @@ if __name__ == '__main__':
 
     # set up our viewing screen
     screen = pygame.display.set_mode((320, 200))
+    pygame.display.set_caption("QR Code Scan")
 
     # use the first camera in the list
     # run sudo modprobe bcm2835-v4l2 to install official camera
