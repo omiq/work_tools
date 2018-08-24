@@ -12,17 +12,45 @@
 <script>
 
 
+<div class="image_gal"></div>
+<script>
+
+(function(jQuery){
+
+    jQuery.fn.shuffle = function() {
+
+        var allElems = this.get(),
+            getRandom = function(max) {
+                return Math.floor(Math.random() * max);
+            },
+            shuffled = jQuery.map(allElems, function(){
+                var random = getRandom(allElems.length),
+                    randEl = jQuery(allElems[random]).clone(true)[0];
+                allElems.splice(random, 1);
+                return randEl;
+           });
+
+        this.each(function(i){
+            jQuery(this).replaceWith(jQuery(shuffled[i]));
+        });
+
+        return jQuery(shuffled);
+
+    };
+
+})(jQuery);
+
 function load_gallery() {
-	var url = 'http://geekahol.com/wp-json/wp/v2/posts?_embed';
+	var url = 'https://photome.io/wp-json/wp/v2/posts?_embed&per_page=100';
 	jQuery.getJSON( url, function( data ) {
 	console.log(Date.now());
     jQuery(".image_gal").empty();
     data.forEach(function(item) {
             console.log(item);
-            var src_img = item['_embedded']['wp:featuredmedia'][0]['media_details']['sizes']['medium_large']['source_url'];
+            var src_img = item['_embedded']['wp:featuredmedia'][0]['media_details']['sizes']['medium']['source_url'];
             console.log(src_img);
-            jQuery(".image_gal").append( "<img src='" + src_img + "'>" );
-
+            jQuery(".image_gal").append( "<img src='" + src_img + "' style='padding: 1px 4px 0px 4px'>" );
+	jQuery('.image_gal img').shuffle();
         })
     });
 }
@@ -32,6 +60,7 @@ function load_gallery() {
 function timeout() {
     setTimeout(function () {
         load_gallery();
+
         timeout();
     }, 10000);
 }
