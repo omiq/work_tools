@@ -1,3 +1,4 @@
+import os
 import PIL
 from PIL import Image
 import pyzbar.pyzbar as pyzbar
@@ -7,26 +8,37 @@ from pygame.locals import *
 
 
 # function that pulls data from the image
-def read_codes(input):
-    # read the QR code(s)
-    codes = pyzbar.decode(input)
+def read_codes(source_image):
 
-    return codes
+    # read the QR code(s)
+    result = pyzbar.decode(source_image)
+
+    return result
 
 
 # main function
 if __name__ == '__main__':
 
-    # set up the camera
+    # set up pygame object
     pygame.init()
+
+    # initialise
     pygame.camera.init()
 
     # clock so the loop does not freeze the pi
     clock = pygame.time.Clock()
 
     # set up our viewing screen
+    # screen = pygame.display.set_mode((320, 200), pygame.FULLSCREEN)
     screen = pygame.display.set_mode((320, 200))
+
+    # Fill the screen with red (255, 0, 0)
+    red = (255, 0, 0)
+    screen.fill(red)
+
+    # Update the display
     pygame.display.set_caption("QR Code Scan")
+    pygame.display.update()
 
     # use the first camera in the list
     # run sudo modprobe bcm2835-v4l2 to install official camera
