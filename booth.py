@@ -4,6 +4,7 @@ import os
 import RPi.GPIO as GPIO
 import requests
 import time
+import random
 import picamera
 import pygame
 import PIL
@@ -241,10 +242,13 @@ def capture(camera, file):
     camera.resolution = (800, 480)
 
 
+# add smoke and logo
 def combine_images(file):
 
+    choices = 'ABCDE'
+    rando = random.choice(choices)
     original = Image.open(file)
-    smoke = Image.open("smoke/SmokeOverlayMaster-v01-A.png")
+    smoke = Image.open("smoke/SmokeOverlayMaster-v01-{}.png".format(rando))
     logo = Image.open("WPE-LGO-Summit18+WPE-Center-RGB+W.png")
     area = (0, 0, 1080, 1080)
     original.paste(smoke, area, mask=smoke)
