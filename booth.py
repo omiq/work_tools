@@ -214,12 +214,12 @@ def display_captured(file):
     window.wm_attributes('-alpha', 0.3)
 
     # image widget
-    pic = ImageTk.PhotoImage(Image.open(file).resize((360, 360)))
-    image_widget = tk.Label(window, image=pic, width=800, height=600, background='black')
-    image_widget.place(x=0, y=0, width=800, height=600)
+    pic = ImageTk.PhotoImage(Image.open(file).resize((480, 480)))
+    image_widget = tk.Label(window, image=pic, width=800, height=480, background='black')
+    image_widget.place(x=0, y=0, width=800, height=480)
     image_widget.pack(expand=True)
     window.update()
-    window.minsize(800, 600)
+    window.minsize(800, 480)
 
     # transfer the file
     image_id = upload_image(file)
@@ -239,6 +239,17 @@ def capture(camera, file):
     camera.resolution = (1080, 1080)
     camera.capture(file, 'jpeg')
     camera.resolution = (800, 480)
+
+
+def combine_images(file):
+
+    original = Image.open(file)
+    smoke = Image.open("smoke/SmokeOverlayMaster-v01-A.png")
+    logo = Image.open("WPE-LGO-Summit18+WPE-Center-RGB+W.png")
+    area = (0, 0, 1080, 1080)
+    original.paste(smoke, area, mask=smoke)
+    original.paste(logo, area, mask=logo)
+    original.save(file)
 
 
 # tweet the pic
@@ -277,6 +288,8 @@ def main():
                 file = "./pictures/booth_{}.jpg".format(time.time())
 
                 capture(camera, file)
+
+                combine_images(file)
 
                 display_captured(file)
 
