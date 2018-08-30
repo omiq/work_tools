@@ -22,6 +22,36 @@ GPIO.setup(26, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 pygame.mixer.init()
 
 
+# overlay
+def make_overlay(camera):
+
+    # Load the arbitrarily sized image
+    img = Image.open('overlay.png')
+
+    # Create an image padded to the required size with
+    # mode 'RGB'
+    pad = Image.new('RGBA', (
+        ((img.size[0] + 31) // 32) * 32,
+        ((img.size[1] + 15) // 16) * 16,
+    ))
+
+    # Paste the original image into the padded one
+    pad.paste(img, (0, 0))
+
+    # Add the overlay with the padded image as the source,
+    # but the original image's dimensions
+    overlay = camera.add_overlay(pad.tobytes(), size=img.size)
+
+    # By default, the overlay is in layer 0, beneath the
+    # preview (which defaults to layer 2). Here we make
+    # the new overlay semi-transparent, then move it above
+    # the preview
+    overlay.alpha = 155
+    overlay.layer = 3
+
+    return overlay
+
+
 # get an image source for a given attachment ID
 def get_url(image_id):
     url = "http://photome.io/wp-json/wp/v2/media/" + str(image_id)
@@ -184,7 +214,7 @@ def display_captured(file):
     window.wm_attributes('-alpha', 0.3)
 
     # image widget
-    pic = ImageTk.PhotoImage(Image.open(file).resize((640, 360)))
+    pic = ImageTk.PhotoImage(Image.open(file).resize((360, 360)))
     image_widget = tk.Label(window, image=pic, width=800, height=600, background='black')
     image_widget.place(x=0, y=0, width=800, height=600)
     image_widget.pack(expand=True)
@@ -206,9 +236,9 @@ def display_captured(file):
 def capture(camera, file):
     pygame.mixer.music.load("shutter.mp3")
     pygame.mixer.music.play()
-    camera.resolution = (1920, 1080)
+    camera.resolution = (1080, 1080)
     camera.capture(file, 'jpeg')
-    camera.resolution = (1280, 720)
+    camera.resolution = (800, 600)
 
 
 # tweet the pic
@@ -225,14 +255,14 @@ def tweet(file):
 
 # main loop
 def main():
-        camera = picamera.PiCamera(resolution=(1280, 720))
+
+        camera = picamera.PiCamera(resolution=(800, 600))
         camera.vflip = True
         camera.hflip = True
         camera.awb_mode = 'auto'
-        camera.exposure_mode = 'sports'
+        overlay = make_overlay(camera)
 
-        img = Image.open('overlay.png')
-        overlay = camera.add_overlay(img.tobytes(), layer=3, alpha=100)
+        # start preview
         camera.preview_fullscreen = True
 
         # thread to show the camera preview in background process
@@ -255,7 +285,8 @@ def main():
                 for x in range(0, 10):
                     sys.stdout.write(u"\u001b[1000D" + "SNAP!!")
 
-                overlay = camera.add_overlay(img.tobytes(), layer=3, alpha=100)
+                # restore the overlay and preview
+                overlay = make_overlay(camera)
                 camera.start_preview()
 
             else:
