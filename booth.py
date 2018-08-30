@@ -238,7 +238,7 @@ def capture(camera, file):
     pygame.mixer.music.play()
     camera.resolution = (1080, 1080)
     camera.capture(file, 'jpeg')
-    camera.resolution = (800, 600)
+    camera.resolution = (800, 480)
 
 
 # tweet the pic
@@ -256,7 +256,7 @@ def tweet(file):
 # main loop
 def main():
 
-        camera = picamera.PiCamera(resolution=(800, 600))
+        camera = picamera.PiCamera(resolution=(800, 480))
         camera.vflip = True
         camera.hflip = True
         camera.awb_mode = 'auto'
