@@ -1,6 +1,18 @@
 import csv
 import requests
 import time
+import mysql.connector
+
+config = {
+  'user': 'root',
+  'password': 'root',
+  'host': 'localhost:8889',
+  'database': 'mystudiopress',
+  'raise_on_warnings': True,
+}
+
+link = mysql.connector.connect(**config)
+
 
 def get_validate(email):
     return requests.get(
@@ -9,11 +21,16 @@ def get_validate(email):
         params={"address": email})
 
 
-with open("/Volumes/GoogleDrive/My Drive/mysp_data/all_forum_users__2018-09-06_21-53-16.csv") as f:
-    reader = csv.reader(f)
-    data = [r for r in reader]
-    data.pop(0) # remove header
+cursor = link.cursor()
 
+cursor.execute("SELECT * FROM wp_users;")
+
+result = cursor.fetchall()
+
+for x in result:
+    print(x)
+
+exit()
 
 for email in data:
     print(email[0])
