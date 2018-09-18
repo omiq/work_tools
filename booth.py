@@ -248,7 +248,7 @@ def combine_images(file):
     choices = 'ABCDE'
     rando = random.choice(choices)
     original = Image.open(file)
-    smoke = Image.open("smoke/SmokeOverlayMaster-v01-{}.png".format(rando))
+    smoke = Image.open("smoke/WPE-Summit18-PhotoEngine-Overlay-v01-Overlay-{}.png".format(rando))
     logo = Image.open("WPE-LGO-Summit18+WPE-Center-RGB+W.png")
     area = (0, 0, 1080, 1080)
     original.paste(smoke, area, mask=smoke)
