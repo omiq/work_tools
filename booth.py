@@ -11,7 +11,7 @@ import PIL
 import tweeter
 import qrscan
 import tkinter as tk
-from PIL import ImageTk, Image
+from PIL import ImageTk, Image, ImageDraw, ImageFont
 
 # We are going to use the BCM numbering
 GPIO.setmode(GPIO.BCM)
@@ -289,6 +289,35 @@ def main():
         # infinite loop to check the GPIO pins for button press
         while 1:
             if not GPIO.input(26):
+
+                # continuously updates the overlayed layer and display stats
+                overlay_renderer = None
+
+                for x in range(5, 0):
+                    text = time.strftime(x)
+                    img = Image.new("RGB", (800, 480))
+                    draw = ImageDraw.Draw(img)
+                    draw.font = ImageFont.truetype(
+                        "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
+                        50)
+                    draw.text((300, 200), text, (255, 0, 0))
+
+                    if not overlay_renderer:
+                        """
+                        If overlay layer is not created yet, get a new one. Layer
+                        parameter must have 3 or higher number because the original
+                        preview layer has a # of 2 and a layer with smaller number will
+                        be obscured.
+                        """
+                        overlay_renderer = camera.add_overlay(img.tobytes(),
+                                                              layer=3,
+                                                              size=img.size,
+                                                              alpha=128);
+                    else:
+                        overlay_renderer.update(img.tobytes())
+                    time.sleep(1)
+
+                camera.remove_overlay(overlay_renderer)
                 camera.remove_overlay(overlay)
                 camera.stop_preview()
 
