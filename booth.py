@@ -20,7 +20,10 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(26, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 # Load up the shutter sound effect
+pygame.init()
 pygame.mixer.init()
+beep = pygame.mixer.Sound("./beep.wav")
+tada = pygame.mixer.Sound("./tada.wav")
 
 
 # overlay
@@ -202,7 +205,7 @@ def display_captured(file):
             exit()
 
     # success sound
-    pygame.mixer.music.load("tada.mp3")
+    tada.play()
 
     sys.stdout.write(u"\x1b[2J\x1b[H\u001b[41;1m" + "Uploading ...\n\n\n\n\u001b[0m")
 
@@ -293,7 +296,7 @@ def main():
                 # continuously updates the overlayed layer and display stats
                 overlay_renderer = None
 
-                for x in range(5, 0):
+                for x in reversed(range(5)):
                     text = time.strftime(x)
                     img = Image.new("RGB", (800, 480))
                     draw = ImageDraw.Draw(img)
@@ -315,9 +318,10 @@ def main():
                                                               alpha=128);
                     else:
                         overlay_renderer.update(img.tobytes())
+                    beep.play()
                     time.sleep(1)
 
-                camera.remove_overlay(overlay_renderer)
+                #camera.remove_overlay(overlay_renderer)
                 camera.remove_overlay(overlay)
                 camera.stop_preview()
 
