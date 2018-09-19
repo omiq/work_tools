@@ -26,6 +26,7 @@ beep = pygame.mixer.Sound("./beep.wav")
 tada = pygame.mixer.Sound("./tada.wav")
 shutter = pygame.mixer.Sound("./shutter.wav")
 
+
 # overlay
 def make_overlay(camera):
 
@@ -194,20 +195,19 @@ def display_captured(file):
     # read the image
     input_image = PIL.Image.open(file)
 
-    # scan for QR codes
-    codes = qrscan.read_codes(input_image)
-
-    # Print results
-    for this_code in codes:
-        if "QRCODE" == this_code.type:
-            sys.stdout.write(u"\x1b[2J\x1b[H\u001b[41;1m" + "QR CODE SCAN COMPLETE ...\n\n\n\n\u001b[0m")
-            print('DETECTED: {}'.format(str(this_code.data)))
-            exit()
-
-    # success sound
-    tada.play()
-
-    sys.stdout.write(u"\x1b[2J\x1b[H\u001b[41;1m" + "Uploading ...\n\n\n\n\u001b[0m")
+    '''
+        # scan for QR codes
+        codes = qrscan.read_codes(input_image)
+    
+        # Print results
+        for this_code in codes:
+            if "QRCODE" == this_code.type:
+                sys.stdout.write(u"\x1b[2J\x1b[H\u001b[41;1m" + "QR CODE SCAN COMPLETE ...\n\n\n\n\u001b[0m")
+                print('DETECTED: {}'.format(str(this_code.data)))
+                exit()
+    
+        sys.stdout.write(u"\x1b[2J\x1b[H\u001b[41;1m" + "Uploading ...\n\n\n\n\u001b[0m")
+    '''
 
     # gui window
     window = tk.Tk()
@@ -232,7 +232,7 @@ def display_captured(file):
 
     # close window
     window.after(2500, lambda: window.destroy())
-    pygame.mixer.music.play()
+    tada.play()
     window.mainloop()
 
 
