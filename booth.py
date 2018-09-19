@@ -302,12 +302,12 @@ def main():
                     else:
                         text = ""
 
-                    img = Image.new("RGB", (800, 480))
+                    img = Image.new("RGBA", (800, 480))
                     draw = ImageDraw.Draw(img)
                     draw.font = ImageFont.truetype(
                         "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf",
-                        50)
-                    draw.text((300, 200), text, (255, 0, 0))
+                        80)
+                    draw.text((390, 200), text, (255, 0, 0))
 
                     if not overlay_renderer:
                         """
@@ -319,7 +319,7 @@ def main():
                         overlay_renderer = camera.add_overlay(img.tobytes(),
                                                               layer=3,
                                                               size=img.size,
-                                                              alpha=128);
+                                                              alpha=255);
                     else:
                         overlay_renderer.update(img.tobytes())
                     beep.play()
