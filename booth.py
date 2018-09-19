@@ -24,7 +24,7 @@ pygame.init()
 pygame.mixer.init()
 beep = pygame.mixer.Sound("./beep.wav")
 tada = pygame.mixer.Sound("./tada.wav")
-
+shutter = pygame.mixer.Sound("./shutter.wav")
 
 # overlay
 def make_overlay(camera):
@@ -238,8 +238,8 @@ def display_captured(file):
 
 # snap the picture
 def capture(camera, file):
-    pygame.mixer.music.load("shutter.mp3")
-    pygame.mixer.music.play()
+
+    shutter.play()
     camera.resolution = (1080, 1080)
     camera.capture(file, 'jpeg')
     camera.resolution = (800, 480)
@@ -297,7 +297,11 @@ def main():
                 overlay_renderer = None
 
                 for x in reversed(range(5)):
-                    text = time.strftime(x)
+                    if x > 0:
+                        text = str(x)
+                    else:
+                        text = ""
+
                     img = Image.new("RGB", (800, 480))
                     draw = ImageDraw.Draw(img)
                     draw.font = ImageFont.truetype(
