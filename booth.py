@@ -59,7 +59,7 @@ def make_overlay(camera):
 
 # get an image source for a given attachment ID
 def get_url(image_id):
-    url = "http://photome.io/wp-json/wp/v2/media/" + str(image_id)
+    url = "https://summitphotoengine.com/wp-json/wp/v2/media/" + str(image_id)
     response = requests.get(url)
     #print(response.json())
     return response.json()['guid']['rendered']
@@ -78,7 +78,7 @@ def create_post(image_id):
     # does not work on WPE so using SPS
     # url = "http://geekahol.com/wp-json/wp/v2/media/?title=" + slug
     # url = "http://booth2018.wpengine.com/wp-json/wp/v2/media/?title=" + slug
-    url = "http://photome.io/wp-json/wp/v2/posts/"
+    url = "https://summitphotoengine.com/wp-json/wp/v2/posts/"
 
     # set up the parameters - basic login details from the environment variables
     user = os.environ['WP_USER']
@@ -124,7 +124,7 @@ def upload_image(image):
     # does not work on WPE so using SPS
     # url = "http://geekahol.com/wp-json/wp/v2/media/?title=" + slug
     # url = "http://booth2018.wpengine.com/wp-json/wp/v2/media/?title=" + slug
-    url = "http://photome.io/wp-json/wp/v2/media/?title=" + slug
+    url = "https://summitphotoengine.com/wp-json/wp/v2/media/?title=" + slug
 
     # the headers for the request (right now hard coded to be JPG because photographs)
     headers = {
@@ -280,7 +280,7 @@ def main():
         camera = picamera.PiCamera(resolution=(800, 480))
         camera.vflip = True
         camera.hflip = True
-        camera.awb_mode = 'auto'
+        camera.awb_mode = 'sport'
         overlay = make_overlay(camera)
 
         # start preview

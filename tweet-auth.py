@@ -1,8 +1,7 @@
 import tweepy
 
-
-
 auth = tweepy.OAuthHandler("", "")
+
 try:
     redirect_url = auth.get_authorization_url()
     print(redirect_url)
